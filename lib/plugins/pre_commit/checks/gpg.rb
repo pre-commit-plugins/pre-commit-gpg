@@ -1,4 +1,4 @@
-require 'pre-commit/checks/plugin'
+require 'pre-commit/checks/shell'
 
 module PreCommit
   module Checks
