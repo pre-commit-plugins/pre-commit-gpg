@@ -14,6 +14,48 @@ describe PreCommit::Checks::Gpg do
       check.send(:gpg_program).must_match(/gpg(2)?$/)
     end
 
+    it "ignores non signed files" do
+      Dir.chdir(project_dir) do
+        check.send(:get_signature, "file").must_equal(nil)
+      end
+    end
+
+    it "detects signatures" do
+      Dir.chdir(project_dir) do
+        check.send(:get_signature, "file.good.asc").must_equal("file.good.asc")
+      end
+    end
+
+    it "detects signatures by files" do
+      Dir.chdir(project_dir) do
+        check.send(:get_signature, "file.wrong").must_equal("file.wrong.asc")
+      end
+    end
+
+    it "warns when no GPG found" do
+      check.stubs(:gpg_program).returns(nil)
+      check.expects(:warn).once.with("No GPG program found, skipping verification of file.asc")
+      check.send(:run_check, "file.asc").must_equal(nil)
+    end
+
+    it "verifies good signature" do
+      Dir.chdir(project_dir) do
+        check.send(:run_check, "file.good.asc").must_equal(nil)
+      end
+    end
+
+    it "errors on wrong signature" do
+      Dir.chdir(project_dir) do
+        check.send(
+          :run_check,
+          "file.wrong.asc"
+        ).split(/\n/).must_equal([
+          "gpg: Signature made Sat 08 Nov 2014 03:22:35 PM CET using RSA key ID BF04FF17",
+          "gpg: BAD signature from \"Michal Papis (RVM signing) <mpapis@gmail.com>\" [ultimate]"
+        ])
+      end
+    end
+
   end # private methods
 
 
@@ -25,16 +67,45 @@ describe PreCommit::Checks::Gpg do
     check.call([]).must_equal nil
   end
 
-  #~ it "succeeds if non-php file changed" do
-  #~   check.call([fixture_file('bad-php.js')]).must_equal nil
-  #~ end
 
-  #~ it "succeeds if only good changes" do
-  #~   check.call([fixture_file("good.php")]).must_equal nil
-  #~ end
+  it "succeeds if non signed file changed" do
+    Dir.chdir(project_dir) do
+      check.call(['file']).must_equal nil
+    end
+  end
 
-  #~ it "fails if script fails" do
-  #~   check.call([fixture_file("bad.php")]).must_match(/Parse error/i)
-  #~ end
+  it "succeeds if matching file changed" do
+    Dir.chdir(project_dir) do
+      check.call(['file.good']).must_equal nil
+    end
+  end
+
+  it "succeeds if matching signature file" do
+    Dir.chdir(project_dir) do
+      check.call(['file.good.asc']).must_equal nil
+    end
+  end
+
+  it "fails if not matching file changed" do
+    Dir.chdir(project_dir) do
+      check.call([
+        'file.wrong'
+      ]).split(/\n/).must_equal([
+        "gpg: Signature made Sat 08 Nov 2014 03:22:35 PM CET using RSA key ID BF04FF17",
+        "gpg: BAD signature from \"Michal Papis (RVM signing) <mpapis@gmail.com>\" [ultimate]"
+      ])
+    end
+  end
+
+  it "fails if not matching signature file" do
+    Dir.chdir(project_dir) do
+      check.call([
+        'file.wrong.asc'
+      ]).split(/\n/).must_equal([
+        "gpg: Signature made Sat 08 Nov 2014 03:22:35 PM CET using RSA key ID BF04FF17",
+        "gpg: BAD signature from \"Michal Papis (RVM signing) <mpapis@gmail.com>\" [ultimate]"
+      ])
+    end
+  end
 
 end

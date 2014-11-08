@@ -27,7 +27,7 @@ module PreCommit
           file + ".asc"
         elsif
           File.extname(file) == ".asc" &&
-          File.exist(file.sub(/.asc$/, ""))
+          File.exist?(file.sub(/.asc$/, ""))
         then
           file
         end
