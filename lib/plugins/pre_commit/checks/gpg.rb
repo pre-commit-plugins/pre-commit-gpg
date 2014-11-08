@@ -1,4 +1,5 @@
 require 'pre-commit/checks/shell'
+require 'pre-commit/error_list'
 
 module PreCommit
   module Checks
@@ -15,7 +16,7 @@ module PreCommit
         errors = signature_files.map { |file| run_check(file) }.compact
         return if errors.empty?
 
-        errors.join("\n")
+        errors
       end
 
     private
@@ -37,10 +38,19 @@ module PreCommit
         if
           gpg_program
         then
-          execute(gpg_program, "--verify", file)
+          parse_error( execute(gpg_program, "--verify", file), file )
         else
           warn "No GPG program found, skipping verification of #{file}"
         end
+      end
+
+      def parse_error(errors, file)
+        return if errors.nil?
+        PreCommit::ErrorList.new(
+          errors.split(/\n/).map do |error|
+            PreCommit::Line.new(error, file)
+          end
+        )
       end
 
       def gpg_program

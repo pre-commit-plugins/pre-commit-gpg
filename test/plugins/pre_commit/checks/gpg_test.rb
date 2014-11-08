@@ -46,13 +46,15 @@ describe PreCommit::Checks::Gpg do
 
     it "errors on wrong signature" do
       Dir.chdir(project_dir) do
+        errors =
         check.send(
           :run_check,
           "file.wrong.asc"
-        ).split(/\n/).must_equal([
-          "gpg: Signature made Sat 08 Nov 2014 03:22:35 PM CET using RSA key ID BF04FF17",
-          "gpg: BAD signature from \"Michal Papis (RVM signing) <mpapis@gmail.com>\" [ultimate]"
-        ])
+        ).errors
+        errors.size.must_equal(2)
+        errors.map(&:file).must_equal(["file.wrong.asc", "file.wrong.asc"])
+        errors[0].message.must_equal("gpg: Signature made Sat 08 Nov 2014 03:22:35 PM CET using RSA key ID BF04FF17")
+        errors[1].message.must_match(/\Agpg: BAD signature from "Michal Papis \(RVM signing\) <mpapis@gmail.com>".*\Z/)
       end
     end
 
@@ -90,23 +92,25 @@ describe PreCommit::Checks::Gpg do
 
     it "fails if not matching file changed" do
       Dir.chdir(project_dir) do
-        check.call([
-          'file.wrong'
-        ]).split(/\n/).must_equal([
-          "gpg: Signature made Sat 08 Nov 2014 03:22:35 PM CET using RSA key ID BF04FF17",
-          "gpg: BAD signature from \"Michal Papis (RVM signing) <mpapis@gmail.com>\" [ultimate]"
-        ])
+        errors = check.call(['file.wrong'])
+        errors.size.must_equal(1)
+        errors  = errors[0].errors
+        errors.size.must_equal(2)
+        errors.map(&:file).must_equal(["file.wrong.asc", "file.wrong.asc"])
+        errors[0].message.must_equal("gpg: Signature made Sat 08 Nov 2014 03:22:35 PM CET using RSA key ID BF04FF17")
+        errors[1].message.must_match(/\Agpg: BAD signature from "Michal Papis \(RVM signing\) <mpapis@gmail.com>".*\Z/)
       end
     end
 
     it "fails if not matching signature file" do
       Dir.chdir(project_dir) do
-        check.call([
-          'file.wrong.asc'
-        ]).split(/\n/).must_equal([
-          "gpg: Signature made Sat 08 Nov 2014 03:22:35 PM CET using RSA key ID BF04FF17",
-          "gpg: BAD signature from \"Michal Papis (RVM signing) <mpapis@gmail.com>\" [ultimate]"
-        ])
+        errors = check.call(['file.wrong.asc'])
+        errors.size.must_equal(1)
+        errors  = errors[0].errors
+        errors.size.must_equal(2)
+        errors.map(&:file).must_equal(["file.wrong.asc", "file.wrong.asc"])
+        errors[0].message.must_equal("gpg: Signature made Sat 08 Nov 2014 03:22:35 PM CET using RSA key ID BF04FF17")
+        errors[1].message.must_match(/\Agpg: BAD signature from "Michal Papis \(RVM signing\) <mpapis@gmail.com>".*\Z/)
       end
     end
 
