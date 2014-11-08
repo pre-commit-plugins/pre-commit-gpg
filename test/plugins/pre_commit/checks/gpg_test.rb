@@ -53,7 +53,7 @@ describe PreCommit::Checks::Gpg do
         ).errors
         errors.size.must_equal(2)
         errors.map(&:file).must_equal(["file.wrong.asc", "file.wrong.asc"])
-        errors[0].message.must_equal("gpg: Signature made Sat 08 Nov 2014 03:22:35 PM CET using RSA key ID BF04FF17")
+        errors[0].message.must_match(/\Agpg: Signature made .* using RSA key ID BF04FF17\Z/)
         errors[1].message.must_match(/\Agpg: BAD signature from "Michal Papis \(RVM signing\) <mpapis@gmail.com>".*\Z/)
       end
     end
