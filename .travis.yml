@@ -1,0 +1,13 @@
+bundler_args: ""
+before_install:
+  - "gpg2 --keyserver hkp://keys.gnupg.net --recv-keys D39DC0E3"
+language: ruby
+rvm:
+  - ruby-1.9.3
+  - ruby-2.0.0
+  - ruby-2.1
+  - jruby
+matrix:
+  fast_finish: true
+  allow_failures:
+    - rvm: jruby
