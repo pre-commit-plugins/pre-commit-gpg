@@ -1,3 +1,9 @@
+=begin
+Copyright 2014 Michal Papis <mpapis@gmail.com>
+
+See the file LICENSE for copying permission.
+=end
+
 require 'minitest_helper'
 require 'plugins/pre_commit/checks/gpg'
 

@@ -1,3 +1,9 @@
+=begin
+Copyright 2014 Michal Papis <mpapis@gmail.com>
+
+See the file LICENSE for copying permission.
+=end
+
 if
   RUBY_VERSION == "2.0.0" # check Gemfile
 then

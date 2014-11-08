@@ -1,3 +1,9 @@
+=begin
+Copyright 2014 Michal Papis <mpapis@gmail.com>
+
+See the file LICENSE for copying permission.
+=end
+
 # -*- encoding: utf-8 -*-
 
 lib = File.expand_path('../lib', __FILE__)
@@ -9,7 +15,7 @@ Gem::Specification.new do |s|
   s.version = PreCommit::Gpg::VERSION
   s.authors = ["Michal Papis"]
   s.homepage = "http://github.com/pre-commit-plugins/pre-commit-gpg"
-  s.license = "Apache 2.0"
+  s.license = "MIT"
   s.summary = "GPG verification plugin for jish/pre-commit"
 
   s.extra_rdoc_files = ["README.md"]
