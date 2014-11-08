@@ -1,15 +1,25 @@
 require 'pre-commit/checks/shell'
 require 'pre-commit/error_list'
 
+# :nodoc:
 module PreCommit
+  # :nodoc:
   module Checks
+
+    #
+    # pre-commit gem plugin to verify GPG signatures
+    # when either the file or signature changes
+    #
     class Gpg < Shell
 
+      #
       # description of the plugin
+      #
       def self.description
         "Finds GPG verification problems"
       end
 
+      #
       # Finds files with signature and verifies them
       #
       # @param staged_files [Array<String>] list of files to check
@@ -28,9 +38,13 @@ module PreCommit
 
     private
 
+      #
       # Checks if the given file is a signature or has one
+      #
       # @param file [String] the file to check
+      #
       # @return [nil|String] signature file when found, nil otherwise
+      #
       def get_signature(file)
         if
           File.exist?(file + ".asc")
@@ -45,6 +59,14 @@ module PreCommit
       end
 
       #
+      # Verify given file GPG signature
+      #
+      # @param file [String] path to file to verify
+      #
+      # @return [nil|PreCommit::ErrorList] nil when file verified,
+      #                                    ErrorList when no GPG found to verify
+      #                                    ErrorList when verification failed
+      #
       def run_check(file)
         if
           gpg_program
@@ -55,6 +77,15 @@ module PreCommit
         end
       end
 
+      #
+      # convert verification failure string into ErrorList
+      #
+      # @param errors [String] Output of failed GPG verification to parse
+      # @param file   [String] File that versification failed
+      #
+      # @return [nil|PreCommit::ErrorList] nil when file verified,
+      #                                    ErrorList when verification failed
+      #
       def parse_error(errors, file)
         return if errors.nil?
         PreCommit::ErrorList.new(
@@ -64,10 +95,18 @@ module PreCommit
         )
       end
 
+      #
+      # @return [nil|String] path to the GPG binary or +nil+
+      #
       def gpg_program
         @gpg_program ||= find_binary(:gpg2) || find_binary(:gpg)
       end
 
+      #
+      # @param binary [String] the name of binary to find on +PATH+
+      #
+      # @return [nil|String] path to the searched binary or +nil+
+      #
       def find_binary(binary)
         result = execute_raw(
           "which #{binary}",
@@ -75,6 +114,7 @@ module PreCommit
         ) and result.strip
       end
 
-    end
+    end # class Gpg < Shell
+
   end
 end
