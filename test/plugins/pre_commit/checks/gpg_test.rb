@@ -59,53 +59,57 @@ describe PreCommit::Checks::Gpg do
   end # private methods
 
 
-  it "has text description" do
-    check.class.description.must_be_kind_of String
-  end
+  describe "plugin methods" do
 
-  it "succeeds if nothing changed" do
-    check.call([]).must_equal nil
-  end
-
-
-  it "succeeds if non signed file changed" do
-    Dir.chdir(project_dir) do
-      check.call(['file']).must_equal nil
+    it "has text description" do
+      check.class.description.must_be_kind_of String
     end
-  end
 
-  it "succeeds if matching file changed" do
-    Dir.chdir(project_dir) do
-      check.call(['file.good']).must_equal nil
+    it "succeeds if nothing changed" do
+      check.call([]).must_equal nil
     end
-  end
 
-  it "succeeds if matching signature file" do
-    Dir.chdir(project_dir) do
-      check.call(['file.good.asc']).must_equal nil
-    end
-  end
 
-  it "fails if not matching file changed" do
-    Dir.chdir(project_dir) do
-      check.call([
-        'file.wrong'
-      ]).split(/\n/).must_equal([
-        "gpg: Signature made Sat 08 Nov 2014 03:22:35 PM CET using RSA key ID BF04FF17",
-        "gpg: BAD signature from \"Michal Papis (RVM signing) <mpapis@gmail.com>\" [ultimate]"
-      ])
+    it "succeeds if non signed file changed" do
+      Dir.chdir(project_dir) do
+        check.call(['file']).must_equal nil
+      end
     end
-  end
 
-  it "fails if not matching signature file" do
-    Dir.chdir(project_dir) do
-      check.call([
-        'file.wrong.asc'
-      ]).split(/\n/).must_equal([
-        "gpg: Signature made Sat 08 Nov 2014 03:22:35 PM CET using RSA key ID BF04FF17",
-        "gpg: BAD signature from \"Michal Papis (RVM signing) <mpapis@gmail.com>\" [ultimate]"
-      ])
+    it "succeeds if matching file changed" do
+      Dir.chdir(project_dir) do
+        check.call(['file.good']).must_equal nil
+      end
     end
-  end
+
+    it "succeeds if matching signature file" do
+      Dir.chdir(project_dir) do
+        check.call(['file.good.asc']).must_equal nil
+      end
+    end
+
+    it "fails if not matching file changed" do
+      Dir.chdir(project_dir) do
+        check.call([
+          'file.wrong'
+        ]).split(/\n/).must_equal([
+          "gpg: Signature made Sat 08 Nov 2014 03:22:35 PM CET using RSA key ID BF04FF17",
+          "gpg: BAD signature from \"Michal Papis (RVM signing) <mpapis@gmail.com>\" [ultimate]"
+        ])
+      end
+    end
+
+    it "fails if not matching signature file" do
+      Dir.chdir(project_dir) do
+        check.call([
+          'file.wrong.asc'
+        ]).split(/\n/).must_equal([
+          "gpg: Signature made Sat 08 Nov 2014 03:22:35 PM CET using RSA key ID BF04FF17",
+          "gpg: BAD signature from \"Michal Papis (RVM signing) <mpapis@gmail.com>\" [ultimate]"
+        ])
+      end
+    end
+
+  end # plugin methods
 
 end
