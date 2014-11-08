@@ -94,7 +94,7 @@ describe PreCommit::Checks::Gpg do
       Dir.chdir(project_dir) do
         errors = check.call(['file.wrong'])
         errors.size.must_equal(1)
-        errors[0].errors.must_be_kind_of(PreCommit::ErrorList)
+        errors[0].must_be_kind_of(PreCommit::ErrorList)
       end
     end
 
@@ -102,7 +102,7 @@ describe PreCommit::Checks::Gpg do
       Dir.chdir(project_dir) do
         errors = check.call(['file.wrong.asc'])
         errors.size.must_equal(1)
-        errors[0].errors.must_be_kind_of(PreCommit::ErrorList)
+        errors[0].must_be_kind_of(PreCommit::ErrorList)
       end
     end
 
