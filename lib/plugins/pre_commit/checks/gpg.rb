@@ -44,13 +44,14 @@ module PreCommit
       end
 
       def gpg_program
-        @gpg_program ||=
-          execute_strip("which gpg2", :success_status => false) ||
-          execute_strip("which gpg",  :success_status => false)
+        @gpg_program ||= find_binary(:gpg2) || find_binary(:gpg)
       end
 
-      def execute_strip(command, options = {})
-        result = execute_raw(command, options) and result.strip
+      def find_binary(binary)
+        result = execute_raw(
+          "which #{binary}",
+          :success_status => false
+        ) and result.strip
       end
 
     end
