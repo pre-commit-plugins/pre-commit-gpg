@@ -32,10 +32,9 @@ describe PreCommit::Checks::Gpg do
       end
     end
 
-    it "warns when no GPG found" do
+    it "errors when no GPG found" do
       check.stubs(:gpg_program).returns(nil)
-      check.expects(:warn).once.with("No GPG program found, skipping verification of file.asc")
-      check.send(:run_check, "file.asc").must_equal(nil)
+      check.send(:run_check, "file.asc").to_s.must_equal("No GPG program found to run verification\nfile.asc\n\n")
     end
 
     it "verifies good signature" do

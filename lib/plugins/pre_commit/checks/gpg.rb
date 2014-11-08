@@ -5,10 +5,17 @@ module PreCommit
   module Checks
     class Gpg < Shell
 
+      # description of the plugin
       def self.description
         "Finds GPG verification problems"
       end
 
+      # Finds files with signature and verifies them
+      #
+      # @param staged_files [Array<String>] list of files to check
+      #
+      # @return [nil|Array<PreCommit::ErrorList>] nil when no errors,
+      #                                           list of errors otherwise
       def call(staged_files)
         signature_files = staged_files.map { |file| get_signature(file) }.compact.uniq
         return if signature_files.empty?
@@ -21,6 +28,9 @@ module PreCommit
 
     private
 
+      # Checks if the given file is a signature or has one
+      # @param file [String] the file to check
+      # @return [nil|String] signature file when found, nil otherwise
       def get_signature(file)
         if
           File.exist?(file + ".asc")
@@ -34,13 +44,14 @@ module PreCommit
         end
       end
 
+      #
       def run_check(file)
         if
           gpg_program
         then
           parse_error( execute(gpg_program, "--verify", file), file )
         else
-          warn "No GPG program found, skipping verification of #{file}"
+          PreCommit::ErrorList.new(PreCommit::Line.new("No GPG program found to run verification", file))
         end
       end
 
