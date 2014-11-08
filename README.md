@@ -1,5 +1,3 @@
-# GPG verification for pre-commit gem
-
 [![Gem Version](https://badge.fury.io/rb/pre-commit-gpg.png)](https://rubygems.org/gems/pre-commit-gpg)
 [![Build Status](https://secure.travis-ci.org/pre-commit-plugins/pre-commit-gpg.png?branch=master)](https://travis-ci.org/pre-commit-plugins/pre-commit-gpg)
 [![Dependency Status](https://gemnasium.com/pre-commit-plugins/pre-commit-gpg.png)](https://gemnasium.com/pre-commit-plugins/pre-commit-gpg)
@@ -8,3 +6,13 @@
 [![Inline docs](http://inch-ci.org/github/pre-commit-plugins/pre-commit-gpg.png)](http://inch-ci.org/github/pre-commit-plugins/pre-commit-gpg)
 [![Yard Docs](http://img.shields.io/badge/yard-docs-blue.svg)](http://rubydoc.info/github/pre-commit-plugins/pre-commit-gpg/master/frames)
 [![Github Code](http://img.shields.io/badge/github-code-blue.svg)](https://github.com/pre-commit-plugins/pre-commit-gpg)
+
+# GPG verification for pre-commit gem
+
+### Installation
+
+    gem install pre-commit-gpg
+
+### Usage
+
+    pre-commit enable yaml checks gpg
